@@ -1,9 +1,8 @@
 import cv2
 import datetime
 import stichSmall as ss
-# img = cv2.imread("../../test/Image/testImage2.jpg")
 cap = cv2.VideoCapture("../../test/Video/testVideo3.mp4")
-scale_percent = 60  # percent of original size
+scale_percent = 60
 classNames = []
 classFile = 'coco.names'
 with open(classFile, 'rt') as f:
@@ -33,7 +32,7 @@ while success:
         height = int(img.shape[0] * scale_percent / 100)
         dim = (width, height)
         img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-        classIds, confs, bbox = net.detect(img, confThreshold=0.55)
+        classIds, confs, bbox = net.detect(img, confThreshold=0.65)
         if (len(classIds) != 0 and (1 in classIds)):
             stampArr.append(float(cap.get(cv2.CAP_PROP_POS_MSEC)))
             prevClassId = 1
@@ -44,11 +43,12 @@ while success:
                     height = int(img.shape[0] * scale_percent / 100)
                     dim = (width, height)
                     img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-                    classIds, confs, bbox = net.detect(img, confThreshold=0.55)
+                    classIds, confs, bbox = net.detect(img, confThreshold=0.5)
                 stampArr.append(float(cap.get(cv2.CAP_PROP_POS_MSEC)))
             prevClassId = 0
             timeStamps.append(stampArr)
     except (AttributeError):
+        stampArr.append(cap.get(cv2.CAP_PROP_POS_MSEC))
         timeStamps.append(stampArr)
         pass
 if (len(timeStamps[len(timeStamps)-1]) != 2):
@@ -73,19 +73,23 @@ while (success):
         height = int(img.shape[0] * scale_percent / 100)
         dim = (width, height)
         img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+        if (stampIndex >= len(timeStamps)):
+            break
         currentStart = timeStamps[stampIndex][0]
         currentEnd = timeStamps[stampIndex][1]
+        if (float(cap.get(cv2.CAP_PROP_POS_MSEC)) == currentStart):
+            print(f'Start {currentStart}')
+        if (float(cap.get(cv2.CAP_PROP_POS_MSEC)) > currentEnd):
+            stampIndex = stampIndex+1
         while (success and currentStart < float(cap.get(cv2.CAP_PROP_POS_MSEC)) and float(cap.get(cv2.CAP_PROP_POS_MSEC)) < currentEnd):
             success, img = cap.read()
-            try:
-                width = int(img.shape[1] * scale_percent / 100)
-                height = int(img.shape[0] * scale_percent / 100)
-                dim = (width, height)
-                img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-                cv2.imshow('Output', img)
-                cv2.waitKey(1)
-            except (AttributeError):
-                break
+            if (float(cap.get(cv2.CAP_PROP_POS_MSEC)) == currentEnd):
+                classIds, confs, bbox = net.detect(img, confThreshold=0.55)
+                cv2.rectangle(img, (bbox[0][0], bbox[0][1]), (bbox[0][2], bbox[0][3]), color=(
+                    255, 255, 255), thickness=-1)
+                cv2.imwrite("../../client/extracted/image" +
+                            str(stampIndex)+".jpg", img)
+        cv2.destroyAllWindows()
     except (AttributeError):
         pass
 cap.release()
