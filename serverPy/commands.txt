@@ -1,0 +1,13 @@
+creating a virtual environment
+$ python3 -m venv fastapi-env
+$ source fastapi-env/bin/activate
+// above command is very important, after executing this command it should be like (fastapi-env) (base) Dhirajs-MacBook-Air:pyServer dhiraj$ pip3 install fastapi
+$ pip3 install fastapi
+$ pip3 install uvicorn
+
+
+$ cd serverPy
+$ code .
+
+Run the server with:
+$ uvicorn main:app --reload
