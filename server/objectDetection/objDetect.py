@@ -32,7 +32,7 @@ while success:
         height = int(img.shape[0] * scale_percent / 100)
         dim = (width, height)
         img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-        classIds, confs, bbox = net.detect(img, confThreshold=0.65)
+        classIds, confs, bbox = net.detect(img, confThreshold=0.55)
         if (len(classIds) != 0 and (1 in classIds)):
             stampArr.append(float(cap.get(cv2.CAP_PROP_POS_MSEC)))
             prevClassId = 1
@@ -43,7 +43,7 @@ while success:
                     height = int(img.shape[0] * scale_percent / 100)
                     dim = (width, height)
                     img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-                    classIds, confs, bbox = net.detect(img, confThreshold=0.5)
+                    classIds, confs, bbox = net.detect(img, confThreshold=0.55)
                 stampArr.append(float(cap.get(cv2.CAP_PROP_POS_MSEC)))
             prevClassId = 0
             timeStamps.append(stampArr)
