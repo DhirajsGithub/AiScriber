@@ -27,7 +27,6 @@ app.get("/foundAudio", (req, res) => {
   res.sendFile(fileName, options, function (err) {
     if (err) {
       console.log("Path not yet created");
-      res.redirect("/foundAudio");
     }
   });
 });
