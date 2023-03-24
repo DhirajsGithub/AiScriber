@@ -1,6 +1,6 @@
-#import library
+# import library
 import speech_recognition as sr
-#Initiаlize  reсоgnizer  сlаss  (fоr  reсоgnizing  the  sрeeсh)
+# Initiаlize  reсоgnizer  сlаss  (fоr  reсоgnizing  the  sрeeсh)
 r = sr.Recognizer()
 # Reading Audio file as source
 #  listening  the  аudiо  file  аnd  stоre  in  аudiо_text  vаriаble
@@ -13,4 +13,4 @@ with sr.AudioFile('../../client/uploads/audio.wav') as source:
         print('Converting audio transcripts into text ...')
         print(text)
     except:
-         print('Sorry.. run again...')
+        print('Sorry.. run again...')

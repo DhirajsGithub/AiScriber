@@ -1,7 +1,8 @@
 import cv2
 import datetime
+import stichSmall as ss
 # img = cv2.imread("../../test/Image/testImage2.jpg")
-cap = cv2.VideoCapture("../../test/Video/testVideo1.mp4")
+cap = cv2.VideoCapture("../../test/Video/testVideo3.mp4")
 scale_percent = 60  # percent of original size
 classNames = []
 classFile = 'coco.names'
@@ -18,7 +19,6 @@ net.setInputSwapRB(True)
 timeStamps: list(list()) = []
 prevClassId = 0
 success = 1
-
 frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 fps = cap.get(cv2.CAP_PROP_FPS)
 # calculate duration of the video
@@ -33,9 +33,9 @@ while success:
         height = int(img.shape[0] * scale_percent / 100)
         dim = (width, height)
         img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-        classIds, confs, bbox = net.detect(img, confThreshold=0.5)
+        classIds, confs, bbox = net.detect(img, confThreshold=0.55)
         if (len(classIds) != 0 and (1 in classIds)):
-            stampArr.append(str(cap.get(cv2.CAP_PROP_POS_MSEC)))
+            stampArr.append(float(cap.get(cv2.CAP_PROP_POS_MSEC)))
             prevClassId = 1
             if (prevClassId == 1):
                 while (success and (1 in classIds)):
@@ -44,19 +44,26 @@ while success:
                     height = int(img.shape[0] * scale_percent / 100)
                     dim = (width, height)
                     img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-                    classIds, confs, bbox = net.detect(img, confThreshold=0.5)
-                stampArr.append(str(cap.get(cv2.CAP_PROP_POS_MSEC)))
+                    classIds, confs, bbox = net.detect(img, confThreshold=0.55)
+                stampArr.append(float(cap.get(cv2.CAP_PROP_POS_MSEC)))
             prevClassId = 0
             timeStamps.append(stampArr)
     except (AttributeError):
         timeStamps.append(stampArr)
         pass
-print(timeStamps)
-print(timeStamps[0][0])
-print(timeStamps[0][1])
+if (len(timeStamps[len(timeStamps)-1]) != 2):
+    timeStamps[len(timeStamps)-1].append(float(10e7))
+
+newList = ss.stich(timeStamps)
+while (newList != timeStamps):
+    timeStamps = newList
+    newList = ss.stich(timeStamps)
+for x in timeStamps:
+    print(x)
+
 cap.release()
 cv2.destroyAllWindows()
-cap = cv2.VideoCapture("../../test/Video/testVideo1.mp4")
+cap = cv2.VideoCapture("../../test/Video/testVideo2.mp4")
 success = 1
 stampIndex = 0
 while (success):
@@ -66,17 +73,19 @@ while (success):
         height = int(img.shape[0] * scale_percent / 100)
         dim = (width, height)
         img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-        if (timeStamps[stampIndex][0] == str(cap.get(cv2.CAP_PROP_POS_MSEC))):
-            print(f'Current Timestamp in: {timeStamps[stampIndex][0]}')
-            print(timeStamps[stampIndex][1])
-            while (float(str(cap.get(cv2.CAP_PROP_POS_MSEC))) < float(timeStamps[stampIndex][1]) and success):
-                success, img = cap.read()
+        currentStart = timeStamps[stampIndex][0]
+        currentEnd = timeStamps[stampIndex][1]
+        while (success and currentStart < float(cap.get(cv2.CAP_PROP_POS_MSEC)) and float(cap.get(cv2.CAP_PROP_POS_MSEC)) < currentEnd):
+            success, img = cap.read()
+            try:
                 width = int(img.shape[1] * scale_percent / 100)
                 height = int(img.shape[0] * scale_percent / 100)
                 dim = (width, height)
                 img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-                cv2.imshow('Object', img)
-            stampIndex = stampIndex+1
+                cv2.imshow('Output', img)
+                cv2.waitKey(1)
+            except (AttributeError):
+                break
     except (AttributeError):
         pass
 cap.release()
