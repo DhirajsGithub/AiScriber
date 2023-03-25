@@ -1,3 +1,5 @@
+
+
 from fastapi import FastAPI
 from typing import Optional
 from chatGptAPI import chat
@@ -5,8 +7,10 @@ from pydantic import BaseModel
 import convertToText
 from fastapi.middleware.cors import CORSMiddleware
 
+import objectDetection.objDetect
 
 app = FastAPI()
+
 
 origins = [
     "http://localhost:5173",
@@ -28,6 +32,11 @@ class Data (BaseModel):
 @app.get("/")
 def index():
     return {"msg": "Welcome to ai scrapper"}
+
+
+@app.get("/objDet")
+def index():
+    return {"objDetect": objectDetection.objDetect.objDet()}
 
 
 @app.get("/audioToText")

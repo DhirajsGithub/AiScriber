@@ -5,14 +5,34 @@ import { styles } from "../styles";
 import { SectionWrapper } from "../hoc";
 import { textVariant } from "../utils/motion";
 
-
 const VideoUploadForm = () => {
   const [lecture, setLecture] = useState(null);
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [timeStamps, setTimeStamps] = useState([]);
+  const [imgLocation, setImgLocation] = useState([]);
 
   const handleFileChange = (event) => {
     setLecture(event.target.files[0]);
+  };
+
+  const fetchTimeStamps = async () => {
+    setLoading(true);
+    fetch("http://127.0.0.1:8000/objDet", {
+      method: "GET",
+      credentials: "include", // include cookies and authorization headers
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setLoading(false);
+        setTimeStamps(data.objDetect[0]);
+        setImgLocation(data.objDetect[1]);
+        console.log(data.objDetect[0]);
+      })
+      .catch((error) => console.error(error));
   };
 
   const fetchSummary = async (data) => {
@@ -26,10 +46,16 @@ const VideoUploadForm = () => {
       body: JSON.stringify(data),
     })
       .then((response) => response.json())
-      .then((data) => {
+      .then(async (data) => {
         console.log(data);
         setLoading(false);
         setSummary(data);
+        // objdetect
+        try {
+          await fetchTimeStamps();
+        } catch (error) {
+          console.log(error);
+        }
       })
       .catch((error) => console.error(error));
   };
@@ -69,7 +95,6 @@ const VideoUploadForm = () => {
       .catch((error) => console.log(error));
   };
 
-
   return (
     <>
       {/* <div>
@@ -79,14 +104,23 @@ const VideoUploadForm = () => {
       </div>  */}
 
       <div class="max-w-md mx-auto p-6 rounded-md bg-transparent">
-          <div class="flex items-center justify-between mb-4">
-            <input type="file" onChange={handleFileChange}  class="appearance-none border rounded w-2/3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="file" name="file" required/>
-            <button onClick={handleUpload} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2">
-              Upload
-            </button>
-          </div>
+        <div class="flex items-center justify-between mb-4">
+          <input
+            type="file"
+            onChange={handleFileChange}
+            class="appearance-none border rounded w-2/3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="file"
+            name="file"
+            required
+          />
+          <button
+            onClick={handleUpload}
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2"
+          >
+            Upload
+          </button>
+        </div>
       </div>
-
 
       <div>
         <br />
@@ -94,7 +128,11 @@ const VideoUploadForm = () => {
         {loading && <h1>Loading....</h1>}
         <br />
         <br />
-        {summary && <h1 className={`mb-2 inline-block${styles.sectionHeadText}`}>Summary of Video</h1> }
+        {summary && (
+          <h1 className={`mb-2 inline-block${styles.sectionHeadText}`}>
+            Summary of Video
+          </h1>
+        )}
         {summary && <p>{summary[0]}</p>}
       </div>
     </>

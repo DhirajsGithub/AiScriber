@@ -13,7 +13,7 @@ def textFile(text):
 
 def getText():
 
-    with sr.AudioFile("/Users/dhiraj/Desktop/ai_scriber/AiScriber/server-node/client/uploads/audio.wav") as source:
+    with sr.AudioFile("/Users/dhiraj/Desktop/ai_scriber/AiScriber/server_node/client/uploads/audio.wav") as source:
         audio_text = r.listen(source)
     # recoginize_() method will throw a request error if the API is unreachable, hence using exception handling
         try:
