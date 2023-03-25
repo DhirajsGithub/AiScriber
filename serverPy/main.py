@@ -30,10 +30,14 @@ def index():
     return {"msg": "Welcome to ai scrapper"}
 
 
-@app.get("/summary")
+@app.get("/audioToText")
 def index():
+    return {"subtitle": convertToText.getText()}
 
-    return {f"{chat.getSummary(convertToText.getText())}"}
+
+@app.post("/summary")
+def index(Data: Data):
+    return {f"{chat.getSummary(Data.subtitle)}"}
 
 
 @app.post("/audio/{name}")
