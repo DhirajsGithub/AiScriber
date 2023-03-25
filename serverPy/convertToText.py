@@ -7,7 +7,7 @@ r = sr.Recognizer()
 
 
 def getText():
-    with sr.AudioFile('../client/uploads/audio.wav') as source:
+    with sr.AudioFile('../server-node/client/uploads/audio.wav') as source:
         audio_text = r.listen(source)
     # recoginize_() method will throw a request error if the API is unreachable, hence using exception handling
         try:
