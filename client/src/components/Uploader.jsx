@@ -27,49 +27,61 @@ const props = {
   },
 };
 
-const FetchSummaryComp = () => {
+// const FetchSummaryComp = () => {
+
+//   // const fetchSummary = async () => {
+//   //   const response = fetch("http://127.0.0.1:8000/summary");
+//   //   console.log(response);
+//   //   resJson = (await response).json();
+//   //   setSummary(resJson);
+//   // };
+
+// };
+
+const VideoUploadForm = () => {
+  const [lecture, setLecture] = useState(null);
   const [summary, setSummary] = useState(null);
-  // const fetchSummary = async () => {
-  //   const response = fetch("http://127.0.0.1:8000/summary");
-  //   console.log(response);
-  //   resJson = (await response).json();
-  //   setSummary(resJson);
-  // };
-  const fetchSummary = async () => {
+  const [loading, setLoading] = useState(false);
+
+  const handleFileChange = (event) => {
+    setLecture(event.target.files[0]);
+  };
+
+  const fetchSummary = async (data) => {
+    setLoading(true);
     fetch("http://127.0.0.1:8000/summary", {
-      method: "GET",
+      method: "POST",
       credentials: "include", // include cookies and authorization headers
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setLoading(false);
+        setSummary(data);
+      })
+      .catch((error) => console.error(error));
+  };
+
+  const getTextFromAudio = () => {
+    setLoading(true);
+    fetch("http://127.0.0.1:8000/audioToText", {
+      method: "GET",
+      // credentials: "include", // include cookies and authorization headers
       headers: {
         "Content-Type": "application/json",
       },
     })
       .then((response) => response.json())
       .then((data) => {
-        setSummary(data);
+        // setSummary(data.subtitle);
+        fetchSummary(data);
+        setLoading(false);
       })
       .catch((error) => console.error(error));
-  };
-
-  useEffect(() => {
-    try {
-      fetchSummary();
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
-  return (
-    <div>
-      <h1>Summary of Video</h1>
-      {summary && <p>{summary}</p>}
-    </div>
-  );
-};
-
-const VideoUploadForm = () => {
-  const [lecture, setLecture] = useState(null);
-
-  const handleFileChange = (event) => {
-    setLecture(event.target.files[0]);
   };
 
   const handleUpload = () => {
@@ -77,7 +89,15 @@ const VideoUploadForm = () => {
     formData.append("lecture", lecture);
     axios
       .post("http://localhost:3001/send_video", formData)
-      .then((response) => console.log(response.data))
+      .then(async (response) => {
+        console.log(response.data);
+        // call audioToText function here, after video is successfully uplpaded
+        try {
+          await getTextFromAudio();
+        } catch (error) {
+          console.log("why this error");
+        }
+      })
       .catch((error) => console.log(error));
   };
 
@@ -88,11 +108,22 @@ const VideoUploadForm = () => {
   //   <p className={`${styles.sectionSubText}`}>Click or drag file to this area to upload.</p>
   // </Dragger>
   return (
-    <div>
-      <p className={`${styles.sectionSubText}`}>Click here to upload.</p>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload</button>
-    </div>
+    <>
+      <div>
+        <p className={`${styles.sectionSubText}`}>Click here to upload.</p>
+        <input type="file" onChange={handleFileChange} />
+        <button onClick={handleUpload}>Upload</button>
+      </div>
+      <div>
+        <br />
+        <br />
+        {loading && <h1>Loading....</h1>}
+        <br />
+        <br />
+        <h1>Summary of Video</h1>
+        {summary && <p>{summary[0]}</p>}
+      </div>
+    </>
   );
 };
 
@@ -109,7 +140,6 @@ const Uploader = () => {
       <br />
       <br />
       <br />
-      <FetchSummaryComp />
     </>
   );
 };
