@@ -1,10 +1,16 @@
 const express = require("express");
+const cors = require("cors");
 const ffmpeg = require("fluent-ffmpeg");
 const fs = require("fs");
 const path = require("path");
 const upload = require("./server/multer/multerUpload.js");
 const app = express();
 // const upload = multer({ dest: "./client/uploads" });
+const port = 3001;
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.get("/", (req, res) => {
   const options = {
     root: path.join(__dirname),
@@ -39,8 +45,8 @@ app.get("/foundAudio", (req, res) => {
 });
 
 app.post("/send_video", upload.single("lecture"), (req, res) => {
-  let newFileName = __dirname + "/client/uploads/Lecture.mp4";
-  let targetLocn = __dirname + "/client/uploads/audio.wav";
+  let newFileName = path.join(__dirname, "/client/uploads/Lecture.mp4");
+  let targetLocn = path.join(__dirname, "/client/uploads/audio.wav");
   const response = ffmpeg(newFileName)
     .toFormat("wav")
     .on("error", (err) => {
@@ -55,6 +61,6 @@ app.post("/send_video", upload.single("lecture"), (req, res) => {
   console.log(response);
 });
 
-app.listen(3001, () => {
-  console.log("Hello");
+app.listen(port, () => {
+  console.log(`Server running on port ${3001}`);
 });
