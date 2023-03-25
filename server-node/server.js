@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-const ffmpeg = require("fluent-ffmpeg");
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffmpeg = require('fluent-ffmpeg');
+ffmpeg.setFfmpegPath(ffmpegPath);
 const fs = require("fs");
 const path = require("path");
 const upload = require("./server/multer/multerUpload.js");
@@ -58,9 +60,9 @@ app.post("/send_video", upload.single("lecture"), (req, res) => {
       res.redirect("/foundAudio");
     })
     .save(targetLocn, () => {});
-  console.log(response);
+  console.log("OK uploaded successsssssssss");
 });
 
 app.listen(port, () => {
-  console.log(`Server running on port ${3001}`);
+  console.log(`Server running on port ${port}`);
 });
