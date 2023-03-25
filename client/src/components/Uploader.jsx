@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from 'react';
+import axios from 'axios';
 import { motion } from "framer-motion";
 import { InboxOutlined } from '@ant-design/icons';
 import { message, Upload } from 'antd';
@@ -10,8 +11,7 @@ import { textVariant } from "../utils/motion";
 const { Dragger } = Upload;
 const props = {
   name: 'file',
-  multiple: true,
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+  action: 'localhost:3001/send_video',
   onChange(info) {
     const { status } = info.file;
     if (status !== 'uploading') {
@@ -29,14 +29,36 @@ const props = {
 };
 
 
-const Here = () => (
-  <Dragger {...props}>
-    <p className="ant-upload-drag-icon">
-      <InboxOutlined />
-    </p>
-    <p className={`${styles.sectionSubText}`}>Click or drag file to this area to upload.</p>
-  </Dragger>
-);
+const VideoUploadForm = () => {
+    const [lecture, setLecture] = useState(null);
+  
+    const handleFileChange = (event) => {
+      setLecture(event.target.files[0]);
+    };
+  
+    const handleUpload = () => {
+      const formData = new FormData();
+      formData.append('lecture', lecture);
+      axios.post('http://localhost:3001/send_video', formData)
+        .then(response => console.log(response.data))
+        .catch(error => console.log(error));
+    };
+
+    
+  // <Dragger {...props}>
+  //   <p className="ant-upload-drag-icon">
+  //     <InboxOutlined />
+  //   </p>
+  //   <p className={`${styles.sectionSubText}`}>Click or drag file to this area to upload.</p>
+  // </Dragger>
+  return (
+  <div>
+    <p className={`${styles.sectionSubText}`}>Click here to upload.</p>
+    <input type="file" onChange={handleFileChange} />
+    <button onClick={handleUpload}>Upload</button>
+  </div>
+  );
+};
 
 
 const Uploader = () => {
@@ -46,7 +68,7 @@ const Uploader = () => {
         <h2 className={`${styles.sectionHeadText}`}>Upload your video here</h2>
       </motion.div>
       <br /><br /><br />
-      <Here />
+      <VideoUploadForm />
     </>
   );
 };
