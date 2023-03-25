@@ -1,7 +1,10 @@
 import cv2
 import datetime
+import sys
 import stichSmall as ss
-cap = cv2.VideoCapture("../../test/Video/testVideo3.mp4")
+import textLocalization
+sys.path.insert(0, 'C:/Users/nitin/DevHackFinal/AiScriber/server-node/server/textDetection')
+cap = cv2.VideoCapture("../../client/uploads/Lecture.mp4")
 scale_percent = 60
 classNames = []
 classFile = 'coco.names'
@@ -63,7 +66,7 @@ for x in timeStamps:
 
 cap.release()
 cv2.destroyAllWindows()
-cap = cv2.VideoCapture("../../test/Video/testVideo2.mp4")
+cap = cv2.VideoCapture("../../client/uploads/Lecture.mp4")
 success = 1
 stampIndex = 0
 while (success):
@@ -85,10 +88,11 @@ while (success):
             success, img = cap.read()
             if (float(cap.get(cv2.CAP_PROP_POS_MSEC)) == currentEnd):
                 classIds, confs, bbox = net.detect(img, confThreshold=0.55)
-                cv2.rectangle(img, (bbox[0][0], bbox[0][1]), (bbox[0][2], bbox[0][3]), color=(
-                    255, 255, 255), thickness=-1)
-                cv2.imwrite("../../client/extracted/image" +
-                            str(stampIndex)+".jpg", img)
+                pathStr = "../../client/extracted/image" + \
+                    str(stampIndex)+".jpg"
+                cv2.imwrite(pathStr, img)
+                if (textLocalization.textDetect(pathStr,0.5,320,320)>1):
+                    print(stampIndex)
         cv2.destroyAllWindows()
     except (AttributeError):
         pass

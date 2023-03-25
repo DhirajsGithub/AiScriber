@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
-const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
+const ffmpeg = require("fluent-ffmpeg");
 ffmpeg.setFfmpegPath(ffmpegPath);
 const fs = require("fs");
 const path = require("path");
@@ -18,15 +18,24 @@ app.get("/", (req, res) => {
     root: path.join(__dirname),
   };
   const fileName = "./server/sendVideo.html";
-  fs.unlinkSync(__dirname + "/client/uploads/audio.wav", (err) => {
-    if (err) {
-      res.sendFile(fileName, options, function (err2) {
-        if (err2) {
-          console.log(err2);
-        }
-      });
-    }
-  });
+  console.log(__dirname);
+  if (fs.existsSync(__dirname + "/client/uploads/audio.wav")) {
+    fs.unlinkSync(__dirname + "/client/uploads/audio.wav", (err) => {
+      if (err) {
+        res.sendFile(fileName, options, function (err2) {
+          if (err2) {
+            console.log(err2);
+          }
+        });
+      }
+    });
+  } else {
+    res.sendFile(fileName, options, function (err2) {
+      if (err2) {
+        console.log(err2);
+      }
+    });
+  }
   res.sendFile(fileName, options, function (err) {
     if (err) {
       console.log(err);
@@ -47,6 +56,7 @@ app.get("/foundAudio", (req, res) => {
 });
 
 app.post("/send_video", upload.single("lecture"), (req, res) => {
+  console.log(__dirname);
   let newFileName = path.join(__dirname, "/client/uploads/Lecture.mp4");
   let targetLocn = path.join(__dirname, "/client/uploads/audio.wav");
   const response = ffmpeg(newFileName)
