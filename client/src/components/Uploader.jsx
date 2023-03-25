@@ -1,42 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { InboxOutlined } from "@ant-design/icons";
-import { message, Upload } from "antd";
 import { styles } from "../styles";
 import { SectionWrapper } from "../hoc";
 import { textVariant } from "../utils/motion";
 
-const { Dragger } = Upload;
-const props = {
-  name: "file",
-  action: "localhost:3001/send_video",
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== "uploading") {
-      console.log(info.file, info.fileList);
-    }
-    if (status === "done") {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-  onDrop(e) {
-    console.log("Dropped files", e.dataTransfer.files);
-  },
-};
-
-// const FetchSummaryComp = () => {
-
-//   // const fetchSummary = async () => {
-//   //   const response = fetch("http://127.0.0.1:8000/summary");
-//   //   console.log(response);
-//   //   resJson = (await response).json();
-//   //   setSummary(resJson);
-//   // };
-
-// };
 
 const VideoUploadForm = () => {
   const [lecture, setLecture] = useState(null);
@@ -90,37 +58,43 @@ const VideoUploadForm = () => {
     axios
       .post("http://localhost:3001/send_video", formData)
       .then(async (response) => {
-        console.log(response.data);
+        console.log("Video file uploaded.");
         // call audioToText function here, after video is successfully uplpaded
         try {
           await getTextFromAudio();
         } catch (error) {
-          console.log("why this error");
+          console.log("Why this error");
         }
       })
       .catch((error) => console.log(error));
   };
 
-  // <Dragger {...props}>
-  //   <p className="ant-upload-drag-icon">
-  //     <InboxOutlined />
-  //   </p>
-  //   <p className={`${styles.sectionSubText}`}>Click or drag file to this area to upload.</p>
-  // </Dragger>
+
   return (
     <>
-      <div>
-        <p className={`${styles.sectionSubText}`}>Click here to upload.</p>
-        <input type="file" onChange={handleFileChange} />
+      {/* <div>
+        <p className={`mb-2 inline-block${styles.sectionSubText}`}>Click here to upload.</p>
+         <input type="file" onChange={handleFileChange} />
         <button onClick={handleUpload}>Upload</button>
+      </div>  */}
+
+      <div class="max-w-md mx-auto p-6 rounded-md bg-transparent">
+          <div class="flex items-center justify-between mb-4">
+            <input type="file" onChange={handleFileChange}  class="appearance-none border rounded w-2/3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="file" name="file" required/>
+            <button onClick={handleUpload} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2">
+              Upload
+            </button>
+          </div>
       </div>
+
+
       <div>
         <br />
         <br />
         {loading && <h1>Loading....</h1>}
         <br />
         <br />
-        <h1>Summary of Video</h1>
+        {summary && <h1 className={`mb-2 inline-block${styles.sectionHeadText}`}>Summary of Video</h1> }
         {summary && <p>{summary[0]}</p>}
       </div>
     </>

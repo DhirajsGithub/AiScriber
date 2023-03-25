@@ -60,7 +60,7 @@ app.post("/send_video", upload.single("lecture"), (req, res) => {
       res.redirect("/foundAudio");
     })
     .save(targetLocn, () => {});
-  console.log("OK uploaded successsssssssss");
+  console.log("OK uploaded sucess");
 });
 
 app.listen(port, () => {
