@@ -5,10 +5,8 @@ import carrent from "./carrent.png";
 import jobit from "./jobit.jpg";
 import tripguide from "./tripguide.png";
 
-export {
-  menu,
-  close,
-  carrent,
-  jobit,
-  tripguide,
-};
+import zero from "./zero.jpg";
+import one from "./one.jpg";
+import two from "./two.jpg";
+
+export { menu, close, carrent, jobit, tripguide, zero, one, two };

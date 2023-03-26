@@ -11,3 +11,4 @@ $ code .
 
 Run the server with:
 $ uvicorn main:app --reload
+uvicorn main:app --host 10.196.9.57

@@ -1,16 +1,50 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+
+import Tilt from "react-tilt";
 import { motion } from "framer-motion";
 import { styles } from "../styles";
 import { SectionWrapper } from "../hoc";
-import { textVariant } from "../utils/motion";
+import { fadeIn, textVariant } from "../utils/motion";
+import Approach from "./Approach";
+import { projects2 } from "../constants";
+// import img from "../../../server_node/client/extracted";
 
-const VideoUploadForm = () => {
+const ProjectCard2 = ({ index, name, image }) => {
+  return (
+    <motion.div variants={fadeIn("up", "spring", index * 0.5, 0.75)}>
+      <Tilt
+        options={{
+          max: 45,
+          scale: 1,
+          speed: 450,
+        }}
+        className="bg-tertiary p-5 rounded-2xl sm:w-[360px] w-full"
+      >
+        <div className="relative w-full h-[230px]">
+          <img
+            src={image}
+            alt="project_image"
+            className="w-full h-full object-cover rounded-2xl"
+          />
+        </div>
+
+        <div className="mt-5">
+          <h3 className="text-white font-bold text-[24px]">{name}</h3>
+        </div>
+      </Tilt>
+    </motion.div>
+  );
+};
+
+const VideoUploadForm = (props) => {
   const [lecture, setLecture] = useState(null);
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [timeStamps, setTimeStamps] = useState([]);
-  const [imgLocation, setImgLocation] = useState([]);
+  const [timeStamps, setTimeStamps] = useState([2, 3, 54, 56]);
+  const [imgLocation, setImgLocation] = useState([0, 2]);
+  console.log(timeStamps[0]);
+  console.log(imgLocation[1]);
 
   const handleFileChange = (event) => {
     setLecture(event.target.files[0]);
@@ -134,6 +168,11 @@ const VideoUploadForm = () => {
           </h1>
         )}
         {summary && <p>{summary[0]}</p>}
+      </div>
+      <div className="mt-20 flex flex-wrap gap-7">
+        {projects2.map((project, index) => (
+          <ProjectCard2 key={`project-${index}`} index={index} {...project} />
+        ))}
       </div>
     </>
   );
