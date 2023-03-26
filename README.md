@@ -20,3 +20,5 @@ npm run devStart <br />
 cd serverPy
 pip install requirements.txt
 uvicorn main:app --reload
+
+### open localhost:5173 and upload your video to get summary
