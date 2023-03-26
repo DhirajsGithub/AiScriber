@@ -1,9 +1,5 @@
-import {
-  carrent,
-  jobit,
-  tripguide
-} from "../assets";
-
+import { carrent, jobit, tripguide } from "../assets";
+import { zero, one, two } from "../assets";
 export const navLinks = [
   {
     id: "about",
@@ -24,20 +20,35 @@ const projects = [
     name: "Finding relevant sections",
     description:
       "During writing on the board or a sheet of paper we will try to track the movements of the relevant figure, say a man in our case. When the man is on the background we assume that the instructor is writing. So we start processing his speech for that particular section.",
-    image: carrent
+    image: carrent,
   },
   {
     name: "Processing the found sections",
     description:
       "We are using speech recognition to start off with the second part of our project. In this part we will get all the text of the relevant portions that we found in the last part and start summarizing them and create a document out of it.",
-    image: jobit
+    image: jobit,
   },
   {
     name: "Generating the transcripts",
     description:
       "In this section the summary generated through audio and images will be merged together and we will make the summary, lecture scribe and the AI Generate document of the whole lecture.",
-    image: tripguide
+    image: tripguide,
   },
 ];
 
-export { projects };
+const projects2 = [
+  {
+    name: "Clip 1",
+    image: zero,
+  },
+  {
+    name: "Clip 2",
+    image: one,
+  },
+  {
+    name: "Clip 3",
+    image: two,
+  },
+];
+
+export { projects, projects2 };
